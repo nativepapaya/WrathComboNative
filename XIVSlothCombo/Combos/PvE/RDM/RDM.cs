@@ -254,7 +254,11 @@ namespace XIVSlothCombo.Combos.PvE
                     LocalPlayer.IsCasting == false &&
                     (WasLastWeaponskill(EnchantedRiposte) || 
                      inCombo || 
-                     (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_Fill) && ActionReady(Manafication) && ActionReady(Embolden)) ||
+                     (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_Fill) && 
+                      ActionReady(Manafication) && 
+                      ActionReady(Embolden) && 
+                      LevelChecked(Embolden) &&
+                      LevelChecked(Manafication)) ||
                      HasEffect(Buffs.Embolden) || HasEffect(Buffs.Manafication) ||
                      (RDMMana.White >= 90 && RDMMana.Black >= 90)))
                 {
