@@ -255,7 +255,8 @@ namespace XIVSlothCombo.Combos.PvE
                     (WasLastWeaponskill(EnchantedRiposte) || 
                      inCombo || 
                      (ActionReady(Manafication) && ActionReady(Embolden)) ||
-                     HasEffect(Buffs.Embolden) || HasEffect(Buffs.Manafication)))
+                     HasEffect(Buffs.Embolden) || HasEffect(Buffs.Manafication)) ||
+                    (RDMMana.White >= 90 && RDMMana.Black >= 90))
                 {
                     bool ActionFound =
                         (!Config.RDM_ST_MeleeCombo_Fill && (actionID is Jolt or Jolt2 or Jolt3)) ||
