@@ -250,13 +250,13 @@ namespace XIVSlothCombo.Combos.PvE
                 }
                 
                 //RDM_ST_MELEECOMBO_FILL
-                if (IsEnabled(CustomComboPreset.RDM_ST_Adv_MeleeFill)
-                    && LocalPlayer.IsCasting == false &&
+                if (IsEnabled(CustomComboPreset.RDM_ST_Adv_MeleeFill) && 
+                    LocalPlayer.IsCasting == false &&
                     (WasLastWeaponskill(EnchantedRiposte) || 
                      inCombo || 
-                     (ActionReady(Manafication) && ActionReady(Embolden)) ||
-                     HasEffect(Buffs.Embolden) || HasEffect(Buffs.Manafication)) ||
-                    (RDMMana.White >= 90 && RDMMana.Black >= 90))
+                     (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_Fill) && ActionReady(Manafication) && ActionReady(Embolden)) ||
+                     HasEffect(Buffs.Embolden) || HasEffect(Buffs.Manafication) ||
+                     (RDMMana.White >= 90 && RDMMana.Black >= 90)))
                 {
                     bool ActionFound =
                         (!Config.RDM_ST_MeleeCombo_Fill && (actionID is Jolt or Jolt2 or Jolt3)) ||
