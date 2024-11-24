@@ -1,4 +1,6 @@
+using Dalamud.Game.ClientState.JobGauge.Types;
 using XIVSlothCombo.Combos.PvE.Content;
+using XIVSlothCombo.Combos.PvP;
 using XIVSlothCombo.CustomComboNS;
 
 namespace XIVSlothCombo.Combos.PvE
@@ -8,6 +10,8 @@ namespace XIVSlothCombo.Combos.PvE
         //7.0 Note
         //Gauge information is available via RDMMana
         public const byte JobID = 35;
+        public static bool inCombo;
+
 
         public const uint
             Verthunder = 7505,
@@ -210,7 +214,10 @@ namespace XIVSlothCombo.Combos.PvE
                              (Config.RDM_ST_MeleeFinisher_OnAction[2] && actionID is Veraero or Veraero3 or Verthunder or Verthunder3)));
 
                     if (ActionFound && MeleeCombo.TryMeleeFinisher(lastComboMove, out uint finisherAction))
+                    {
+                        inCombo = false;
                         return finisherAction;
+                    }
                 }
                 //END_RDM_MELEEFINISHER
 
@@ -239,6 +246,40 @@ namespace XIVSlothCombo.Combos.PvE
                             IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_CorpsGapCloser),
                             IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana)))
                             return MeleeID;
+                    }
+                }
+                
+                //RDM_ST_MELEECOMBO_FILL
+                if (IsEnabled(CustomComboPreset.RDM_ST_Adv_MeleeFill)
+                    && LocalPlayer.IsCasting == false &&
+                    (WasLastWeaponskill(EnchantedRiposte) || 
+                     inCombo || 
+                     (ActionReady(Manafication) && ActionReady(Embolden)) ||
+                     HasEffect(Buffs.Embolden) || HasEffect(Buffs.Manafication)))
+                {
+                    bool ActionFound =
+                        (!Config.RDM_ST_MeleeCombo_Fill && (actionID is Jolt or Jolt2 or Jolt3)) ||
+                        (Config.RDM_ST_MeleeCombo_Fill &&
+                         ((Config.RDM_ST_MeleeCombo_OnAction_Fill[0] && actionID is Jolt or Jolt2 or Jolt3) ||
+                          (Config.RDM_ST_MeleeCombo_OnAction_Fill[1] && actionID is Riposte or EnchantedRiposte)));
+
+                    if (ActionFound)
+                    {
+                        if (MeleeCombo.TrySTManaEmbolden(
+                                actionID, lastComboMove, level, out uint ManaEmboldenID,
+                                IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_Fill),
+                                false, false, 
+                                IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana_Fill)))
+                            return ManaEmboldenID;
+
+                        if (MeleeCombo.TrySTMeleeCombo(actionID, lastComboMove, comboTime, out uint MeleeID,
+                                Config.RDM_ST_MeleeEnforced,
+                                false, IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana_Fill)))
+                        {
+                            inCombo = true;
+                            return MeleeID;
+                        }
+                            
                     }
                 }
 

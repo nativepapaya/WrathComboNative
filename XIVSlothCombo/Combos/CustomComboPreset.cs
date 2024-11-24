@@ -3534,6 +3534,21 @@ namespace XIVSlothCombo.Combos
         [ParentCombo(RDM_ST_DPS)]
         [CustomComboInfo("Lucid Dreaming Option", "Weaves Lucid Dreaming when your MP drops below the specified value.", RDM.JobID, 610)]
         RDM_ST_Lucid = 13610,
+        
+        [ParentCombo(RDM_ST_DPS)]
+        [ConflictingCombos(RDM_ST_MeleeCombo)]
+        [CustomComboInfo("Melee Combo Fill Option", "Adds ONLY the melee combo to the rotation." +
+                                             "\nRiposte itself must be initiated manually when using this option.", RDM.JobID, 440)]
+        RDM_ST_Adv_MeleeFill = 13710,
+        
+        [ParentCombo(RDM_ST_Adv_MeleeFill)]
+        [CustomComboInfo("Use Manafication and Embolden Option", "Add Manafication and Embolden.\n**Must be in melee range or have Gap close with Corps-a-corps enabled**", RDM.JobID, 415)]
+        RDM_ST_MeleeCombo_ManaEmbolden_Fill = 13451,
+        
+        [ParentCombo(RDM_ST_Adv_MeleeFill)]
+        [CustomComboInfo("Unbalance Mana Option", "Use Acceleration to unbalance mana prior to starting melee combo.", RDM.JobID, 416)]
+        RDM_ST_MeleeCombo_UnbalanceMana_Fill = 13460,
+        
         #endregion
 
         #region AoE DPS
