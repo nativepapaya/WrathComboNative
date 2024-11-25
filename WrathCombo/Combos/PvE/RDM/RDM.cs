@@ -286,8 +286,10 @@ namespace WrathCombo.Combos.PvE
                 }
 
                 //RDM_ST_ACCELERATION
-                if (IsEnabled(CustomComboPreset.RDM_ST_ThunderAero) && IsEnabled(CustomComboPreset.RDM_ST_ThunderAero_Accel)
-                    && actionID is Jolt or Jolt2 or Jolt3)
+                if (IsEnabled(CustomComboPreset.RDM_ST_ThunderAero) && 
+                    IsEnabled(CustomComboPreset.RDM_ST_ThunderAero_Accel) && 
+                    GetOptionValue(Config.RDM_ST_oGCD_Acceleration_Pooling) < GetRemainingCharges(Acceleration) && 
+                    actionID is Jolt or Jolt2 or Jolt3)
                 {
                     if (SpellCombo.TryAcceleration(actionID, lastComboMove, out uint AccID,
                         IsEnabled(CustomComboPreset.RDM_ST_ThunderAero_Accel_Swiftcast))) 
