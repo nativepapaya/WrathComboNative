@@ -10,8 +10,6 @@ namespace XIVSlothCombo.Combos.PvE
         //7.0 Note
         //Gauge information is available via RDMMana
         public const byte JobID = 35;
-        public static bool inCombo;
-
 
         public const uint
             Verthunder = 7505,
@@ -214,10 +212,7 @@ namespace XIVSlothCombo.Combos.PvE
                              (Config.RDM_ST_MeleeFinisher_OnAction[2] && actionID is Veraero or Veraero3 or Verthunder or Verthunder3)));
 
                     if (ActionFound && MeleeCombo.TryMeleeFinisher(lastComboMove, out uint finisherAction))
-                    {
-                        inCombo = false;
                         return finisherAction;
-                    }
                 }
                 //END_RDM_MELEEFINISHER
 
@@ -253,7 +248,7 @@ namespace XIVSlothCombo.Combos.PvE
                     
                     //Melee Fill
                     if (WasLastWeaponskill(EnchantedRiposte) ||
-                        inCombo ||
+                        WasLastWeaponskill(EnchantedZwerchhau) ||
                         (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden) &&
                          IsOffCooldown(Manafication) &&
                          IsOffCooldown(Embolden) &&
@@ -284,10 +279,8 @@ namespace XIVSlothCombo.Combos.PvE
                                     Config.RDM_ST_MeleeEnforced,
                                     IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_CorpsGapCloser),
                                     IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana)))
-                            {
-                                inCombo = true;
                                 return MeleeID;
-                            }
+                            
                         }
                     }
                 }
