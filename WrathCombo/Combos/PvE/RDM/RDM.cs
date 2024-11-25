@@ -252,8 +252,8 @@ namespace WrathCombo.Combos.PvE
                         WasLastWeaponskill(EnchantedRiposte) ||
                         WasLastWeaponskill(EnchantedZwerchhau) ||
                         (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden) &&
-                         IsOffCooldown(Manafication) &&
-                         IsOffCooldown(Embolden) &&
+                         (IsOffCooldown(Manafication) ||
+                         IsOffCooldown(Embolden)) &&
                          LevelChecked(Embolden) &&
                          LevelChecked(Manafication)))
                     {
