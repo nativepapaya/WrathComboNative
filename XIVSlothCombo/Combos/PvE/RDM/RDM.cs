@@ -225,70 +225,70 @@ namespace XIVSlothCombo.Combos.PvE
                 if (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo)
                     && LocalPlayer.IsCasting == false)
                 {
-                    bool ActionFound =
-                        (!Config.RDM_ST_MeleeCombo_Adv && (actionID is Jolt or Jolt2 or Jolt3)) ||
-                        (Config.RDM_ST_MeleeCombo_Adv &&
-                            ((Config.RDM_ST_MeleeCombo_OnAction[0] && actionID is Jolt or Jolt2 or Jolt3) ||
-                             (Config.RDM_ST_MeleeCombo_OnAction[1] && actionID is Riposte or EnchantedRiposte)));
-
-                    if (ActionFound)
+                    if (IsNotEnabled(CustomComboPreset.RDM_ST_Adv_MeleeFill))
                     {
-                        if (MeleeCombo.TrySTManaEmbolden(
-                            actionID, lastComboMove, level, out uint ManaEmboldenID,
-                            IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden),
-                            IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_CorpsGapCloser),
-                            IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_DoubleCombo),
-                            IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana)))
-                            return ManaEmboldenID;
+                        bool ActionFound =
+                            (!Config.RDM_ST_MeleeCombo_Adv && (actionID is Jolt or Jolt2 or Jolt3)) ||
+                            (Config.RDM_ST_MeleeCombo_Adv &&
+                             ((Config.RDM_ST_MeleeCombo_OnAction[0] && actionID is Jolt or Jolt2 or Jolt3) ||
+                              (Config.RDM_ST_MeleeCombo_OnAction[1] && actionID is Riposte or EnchantedRiposte)));
 
-                        if (MeleeCombo.TrySTMeleeCombo(actionID, lastComboMove, comboTime, out uint MeleeID,
-                            Config.RDM_ST_MeleeEnforced,
-                            IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_CorpsGapCloser),
-                            IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana)))
-                            return MeleeID;
-                    }
-                }
-                
-                //RDM_ST_MELEECOMBO_FILL
-                if (IsEnabled(CustomComboPreset.RDM_ST_Adv_MeleeFill) && 
-                    LocalPlayer.IsCasting == false &&
-                    (WasLastWeaponskill(EnchantedRiposte) || 
-                     inCombo || 
-                     (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_Fill) && 
-                      IsOffCooldown(Manafication) && 
-                      IsOffCooldown(Embolden) && 
-                      LevelChecked(Embolden) &&
-                      LevelChecked(Manafication)) ||
-                     HasEffect(Buffs.Embolden) || 
-                     HasEffect(Buffs.Manafication) ||
-                     (RDMMana.White >= 90 && 
-                      RDMMana.Black >= 90)))
-                {
-                    bool ActionFound =
-                        (!Config.RDM_ST_MeleeCombo_Fill && (actionID is Jolt or Jolt2 or Jolt3)) ||
-                        (Config.RDM_ST_MeleeCombo_Fill &&
-                         ((Config.RDM_ST_MeleeCombo_OnAction_Fill[0] && actionID is Jolt or Jolt2 or Jolt3) ||
-                          (Config.RDM_ST_MeleeCombo_OnAction_Fill[1] && actionID is Riposte or EnchantedRiposte)));
-
-                    if (ActionFound)
-                    {
-                        if (MeleeCombo.TrySTManaEmbolden(
-                                actionID, lastComboMove, level, out uint ManaEmboldenID,
-                                IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_Fill),
-                                false, 
-                                IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_DoubleCombo_Fill), 
-                                IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana_Fill)))
-                            return ManaEmboldenID;
-
-                        if (MeleeCombo.TrySTMeleeCombo(actionID, lastComboMove, comboTime, out uint MeleeID,
-                                Config.RDM_ST_MeleeEnforced,
-                                false, 
-                                IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana_Fill)))
+                        if (ActionFound)
                         {
-                            inCombo = true;
-                            return MeleeID;
+                            if (MeleeCombo.TrySTManaEmbolden(
+                                    actionID, lastComboMove, level, out uint ManaEmboldenID,
+                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden),
+                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_CorpsGapCloser),
+                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_DoubleCombo),
+                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana)))
+                                return ManaEmboldenID;
+
+                            if (MeleeCombo.TrySTMeleeCombo(actionID, lastComboMove, comboTime, out uint MeleeID,
+                                    Config.RDM_ST_MeleeEnforced,
+                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_CorpsGapCloser),
+                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana)))
+                                return MeleeID;
                         }
-                            
+                    }
+                    
+                    //Melee Fill
+                    if (WasLastWeaponskill(EnchantedRiposte) ||
+                        inCombo ||
+                        (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden) &&
+                         IsOffCooldown(Manafication) &&
+                         IsOffCooldown(Embolden) &&
+                         LevelChecked(Embolden) &&
+                         LevelChecked(Manafication)) ||
+                        HasEffect(Buffs.Embolden) ||
+                        HasEffect(Buffs.Manafication) ||
+                        (RDMMana.White >= 90 &&
+                         RDMMana.Black >= 90))
+                    {
+                        bool ActionFound =
+                            (!Config.RDM_ST_MeleeCombo_Adv && (actionID is Jolt or Jolt2 or Jolt3)) ||
+                            (Config.RDM_ST_MeleeCombo_Adv &&
+                             ((Config.RDM_ST_MeleeCombo_OnAction[0] && actionID is Jolt or Jolt2 or Jolt3) ||
+                              (Config.RDM_ST_MeleeCombo_OnAction[1] && actionID is Riposte or EnchantedRiposte)));
+
+                        if (ActionFound)
+                        {
+                            if (MeleeCombo.TrySTManaEmbolden(
+                                    actionID, lastComboMove, level, out uint ManaEmboldenID,
+                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden),
+                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_CorpsGapCloser),
+                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_DoubleCombo),
+                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana)))
+                                return ManaEmboldenID;
+
+                            if (MeleeCombo.TrySTMeleeCombo(actionID, lastComboMove, comboTime, out uint MeleeID,
+                                    Config.RDM_ST_MeleeEnforced,
+                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_CorpsGapCloser),
+                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana)))
+                            {
+                                inCombo = true;
+                                return MeleeID;
+                            }
+                        }
                     }
                 }
 

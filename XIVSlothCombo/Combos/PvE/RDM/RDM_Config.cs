@@ -28,7 +28,6 @@ namespace XIVSlothCombo.Combos.PvE
                 RDM_ST_oGCD_ViceOfThorns = new("RDM_ST_oGCD_ViceOfThorns"),
                 RDM_ST_oGCD_Prefulgence = new("RDM_ST_oGCD_Prefulgence"),
                 RDM_ST_MeleeCombo_Adv = new("RDM_ST_MeleeCombo_Adv"),
-                RDM_ST_MeleeCombo_Fill = new("RDM_ST_MeleeCombo_Adv_Fill"),
                 RDM_ST_MeleeFinisher_Adv = new("RDM_ST_MeleeFinisher_Adv"),
                 RDM_ST_MeleeEnforced = new("RDM_ST_MeleeEnforced"),
 
@@ -47,7 +46,6 @@ namespace XIVSlothCombo.Combos.PvE
             public static UserBoolArray
                 RDM_ST_oGCD_OnAction = new("RDM_ST_oGCD_OnAction"),
                 RDM_ST_MeleeCombo_OnAction = new("RDM_ST_MeleeCombo_OnAction"),
-                RDM_ST_MeleeCombo_OnAction_Fill = new("RDM_ST_MeleeCombo_OnAction_Fill"),
                 RDM_ST_MeleeFinisher_OnAction = new("RDM_ST_MeleeFinisher_OnAction"),
 
                 RDM_AoE_oGCD_OnAction = new("RDM_AoE_oGCD_OnAction"),
@@ -98,17 +96,6 @@ namespace XIVSlothCombo.Combos.PvE
                             ImGui.Indent(); ImGui.Spacing();
                             DrawHorizontalMultiChoice(RDM_ST_MeleeCombo_OnAction, $"{Jolt.ActionName()}s", "", 2, 0, descriptionColor: ImGuiColors.DalamudYellow);
                             DrawHorizontalMultiChoice(RDM_ST_MeleeCombo_OnAction, Riposte.ActionName(), "", 2, 1, descriptionColor: ImGuiColors.DalamudYellow);
-                            ImGui.Unindent();
-                        }
-                        break;
-                    
-                    case CustomComboPreset.RDM_ST_Adv_MeleeFill:
-                        DrawAdditionalBoolChoice(RDM_ST_MeleeCombo_Fill, "Advanced Action Options", "Changes which action this option will replace.", isConditionalChoice: true);
-                        if (RDM_ST_MeleeCombo_Fill)
-                        {
-                            ImGui.Indent(); ImGui.Spacing();
-                            DrawHorizontalMultiChoice(RDM_ST_MeleeCombo_OnAction_Fill, $"{Jolt.ActionName()}s", "", 2, 0, descriptionColor: ImGuiColors.DalamudYellow);
-                            DrawHorizontalMultiChoice(RDM_ST_MeleeCombo_OnAction_Fill, Riposte.ActionName(), "", 2, 1, descriptionColor: ImGuiColors.DalamudYellow);
                             ImGui.Unindent();
                         }
                         break;
