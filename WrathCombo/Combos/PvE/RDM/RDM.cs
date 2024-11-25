@@ -255,9 +255,7 @@ namespace WrathCombo.Combos.PvE
                          IsOffCooldown(Manafication) &&
                          IsOffCooldown(Embolden) &&
                          LevelChecked(Embolden) &&
-                         LevelChecked(Manafication)) ||
-                        HasEffect(Buffs.Embolden) ||
-                        HasEffect(Buffs.Manafication))
+                         LevelChecked(Manafication)))
                     {
                         bool ActionFound =
                             (!Config.RDM_ST_MeleeCombo_Adv && (actionID is Jolt or Jolt2 or Jolt3)) ||
