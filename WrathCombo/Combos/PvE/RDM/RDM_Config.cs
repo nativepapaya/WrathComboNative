@@ -118,7 +118,7 @@ namespace WrathCombo.Combos.PvE
                         break;
                     
                     case CustomComboPreset.RDM_ST_Melee_Overcap_Protection:
-                        DrawSliderInt(50, 100, RDM_ST_Melee_Combo_Overcap_Protection, $"Add {RDM.EnchantedRiposte.ActionName()} when above this Mana", sliderIncrement: Tens);
+                        DrawSliderInt(50, 100, RDM_ST_Melee_Combo_Overcap_Protection, $"Add {RDM.EnchantedRiposte.ActionName()} when at or above this Mana", sliderIncrement: Tens);
                         break;
 
                     case CustomComboPreset.RDM_AoE_oGCD:
