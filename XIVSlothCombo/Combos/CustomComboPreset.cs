@@ -3549,6 +3549,14 @@ namespace XIVSlothCombo.Combos
         [CustomComboInfo("Unbalance Mana Option", "Use Acceleration to unbalance mana prior to starting melee combo.", RDM.JobID, 416)]
         RDM_ST_MeleeCombo_UnbalanceMana_Fill = 13460,
         
+        [ParentCombo(RDM_ST_MeleeCombo_ManaEmbolden_Fill)]
+        [CustomComboInfo("Hold for Double Melee Combo Option [Lv.90]", "Hold both actions until you can perform a double melee combo.", RDM.JobID, 417)]
+        RDM_ST_MeleeCombo_ManaEmbolden_DoubleCombo_Fill = 134810,
+        
+        [ParentCombo(RDM_ST_Adv_MeleeFill)]
+        [CustomComboInfo("Gap close with Corps-a-corps Option", "Use Corp-a-corps when out of melee range and you have enough mana to start the melee combo.", RDM.JobID, 418)]
+        RDM_ST_MeleeCombo_CorpsGapCloser_Fill = 134820,
+        
         #endregion
 
         #region AoE DPS

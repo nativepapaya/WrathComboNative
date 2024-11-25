@@ -255,12 +255,14 @@ namespace XIVSlothCombo.Combos.PvE
                     (WasLastWeaponskill(EnchantedRiposte) || 
                      inCombo || 
                      (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_Fill) && 
-                      ActionReady(Manafication) && 
-                      ActionReady(Embolden) && 
+                      IsOffCooldown(Manafication) && 
+                      IsOffCooldown(Embolden) && 
                       LevelChecked(Embolden) &&
                       LevelChecked(Manafication)) ||
-                     HasEffect(Buffs.Embolden) || HasEffect(Buffs.Manafication) ||
-                     (RDMMana.White >= 90 && RDMMana.Black >= 90)))
+                     HasEffect(Buffs.Embolden) || 
+                     HasEffect(Buffs.Manafication) ||
+                     (RDMMana.White >= 90 && 
+                      RDMMana.Black >= 90)))
                 {
                     bool ActionFound =
                         (!Config.RDM_ST_MeleeCombo_Fill && (actionID is Jolt or Jolt2 or Jolt3)) ||
@@ -273,13 +275,15 @@ namespace XIVSlothCombo.Combos.PvE
                         if (MeleeCombo.TrySTManaEmbolden(
                                 actionID, lastComboMove, level, out uint ManaEmboldenID,
                                 IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_Fill),
-                                false, false, 
+                                false, 
+                                IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_DoubleCombo_Fill), 
                                 IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana_Fill)))
                             return ManaEmboldenID;
 
                         if (MeleeCombo.TrySTMeleeCombo(actionID, lastComboMove, comboTime, out uint MeleeID,
                                 Config.RDM_ST_MeleeEnforced,
-                                false, IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana_Fill)))
+                                false, 
+                                IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana_Fill)))
                         {
                             inCombo = true;
                             return MeleeID;
