@@ -256,8 +256,8 @@ namespace XIVSlothCombo.Combos.PvE
                          LevelChecked(Manafication)) ||
                         HasEffect(Buffs.Embolden) ||
                         HasEffect(Buffs.Manafication) ||
-                        (RDMMana.White >= 90 &&
-                         RDMMana.Black >= 90))
+                        (RDMMana.White >= 80 &&
+                         RDMMana.Black >= 80))
                     {
                         bool ActionFound =
                             (!Config.RDM_ST_MeleeCombo_Adv && (actionID is Jolt or Jolt2 or Jolt3)) ||
