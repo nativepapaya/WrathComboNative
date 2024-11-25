@@ -215,10 +215,12 @@ namespace WrathCombo.Combos.PvE
                 //END_RDM_MELEEFINISHER
 
                 //RDM_ST_MELEECOMBO
-                if (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo)
-                    && LocalPlayer.IsCasting == false)
+                if (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo) && 
+                    LocalPlayer.IsCasting == false)
                 {
-                    if (IsNotEnabled(CustomComboPreset.RDM_ST_Adv_MeleeFill))
+                    if (IsNotEnabled(CustomComboPreset.RDM_ST_Adv_MeleeFill) || 
+                        (IsEnabled(CustomComboPreset.RDM_ST_Melee_Overcap_Protection) && 
+                         RDMMana.Min >= GetOptionValue(Config.RDM_ST_Melee_Combo_Overcap_Protection)))
                     {
                         bool ActionFound =
                             (!Config.RDM_ST_MeleeCombo_Adv && (actionID is Jolt or Jolt2 or Jolt3)) ||
@@ -245,7 +247,9 @@ namespace WrathCombo.Combos.PvE
                     }
                     
                     //Melee Fill
-                    if (WasLastWeaponskill(EnchantedRiposte) ||
+                    if ((IsEnabled(CustomComboPreset.RDM_ST_Melee_Overcap_Protection) && 
+                        RDMMana.Min >= GetOptionValue(Config.RDM_ST_Melee_Combo_Overcap_Protection)) ||
+                        WasLastWeaponskill(EnchantedRiposte) ||
                         WasLastWeaponskill(EnchantedZwerchhau) ||
                         (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden) &&
                          IsOffCooldown(Manafication) &&
@@ -253,8 +257,7 @@ namespace WrathCombo.Combos.PvE
                          LevelChecked(Embolden) &&
                          LevelChecked(Manafication)) ||
                         HasEffect(Buffs.Embolden) ||
-                        HasEffect(Buffs.Manafication) ||
-                        RDMMana.Min >= 80)
+                        HasEffect(Buffs.Manafication))
                     {
                         bool ActionFound =
                             (!Config.RDM_ST_MeleeCombo_Adv && (actionID is Jolt or Jolt2 or Jolt3)) ||
