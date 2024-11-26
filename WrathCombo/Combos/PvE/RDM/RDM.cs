@@ -252,8 +252,10 @@ namespace WrathCombo.Combos.PvE
                         WasLastWeaponskill(EnchantedRiposte) ||
                         WasLastWeaponskill(EnchantedZwerchhau) ||
                         (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden) &&
-                         IsOffCooldown(Manafication) &&
-                         LevelChecked(Manafication)) || HasEffect(Buffs.MagickedSwordPlay))
+                         (IsOffCooldown(Manafication) || 
+                          IsOffCooldown(Embolden)) &&
+                         LevelChecked(Manafication)) || 
+                        HasEffect(Buffs.MagickedSwordPlay))
                     {
                         bool ActionFound =
                             (!Config.RDM_ST_MeleeCombo_Adv && (actionID is Jolt or Jolt2 or Jolt3)) ||
