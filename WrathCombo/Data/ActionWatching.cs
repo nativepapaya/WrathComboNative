@@ -85,6 +85,9 @@ namespace WrathCombo.Data
         {
             try
             {
+                if (!CustomComboFunctions.InCombat())
+                    CombatActions.Clear();
+
                 if (actionType == 1 && CustomComboFunctions.GetMaxCharges(actionId) > 0)
                     ChargeTimestamps[actionId] = Environment.TickCount64;
 
@@ -216,6 +219,13 @@ namespace WrathCombo.Data
             return (GetAttackType(lastAction) == GetAttackType(secondLastAction) && GetAttackType(lastAction) == ActionAttackType.Ability);
         }
 
+        public static bool HasWeaved()
+        {
+            if (CombatActions.Count < 1) return false;
+            var lastAction = CombatActions.Last();
+
+            return GetAttackType(lastAction) == ActionAttackType.Ability;
+        }
 
         public static int NumberOfGcdsUsed => CombatActions.Count(x => GetAttackType(x) == ActionAttackType.Weaponskill || GetAttackType(x) == ActionAttackType.Spell);
         public static uint LastAction { get; set; } = 0;
