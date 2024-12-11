@@ -7,16 +7,15 @@ using ECommons.GameFunctions;
 using ECommons.GameHelpers;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using Lumina.Excel.Sheets;
 using System;
 using System.Linq;
 using WrathCombo.Combos;
 using WrathCombo.Combos.PvE;
 using WrathCombo.CustomComboNS.Functions;
 using WrathCombo.Data;
+using WrathCombo.Extensions;
 using WrathCombo.Services;
 using WrathCombo.Window.Functions;
-using WrathCombo.Extensions;
 using Action = Lumina.Excel.Sheets.Action;
 
 namespace WrathCombo.AutoRotation
@@ -102,12 +101,11 @@ namespace WrathCombo.AutoRotation
                 if (action.IsHeal)
                 {
                     if (!AutomateHealing(preset.Key, attributes, gameAct) && Svc.Targets.Target != null && !Svc.Targets.Target.IsHostile() && Environment.TickCount64 > LastHealAt + 1000)
-                        Svc.Targets.Target = null;
 
-                    if ((healTarget != null && !action.IsAoE) || (aoeheal && action.IsAoE))
-                        return;
-                    else
-                        continue;
+                        if ((healTarget != null && !action.IsAoE) || (aoeheal && action.IsAoE))
+                            return;
+                        else
+                            continue;
                 }
 
 
@@ -117,7 +115,8 @@ namespace WrathCombo.AutoRotation
                     continue;
                 }
 
-                AutomateDPS(preset.Key, attributes, gameAct);
+                if (!action.IsHeal)
+                    AutomateDPS(preset.Key, attributes, gameAct);
             }
 
 
@@ -351,7 +350,6 @@ namespace WrathCombo.AutoRotation
                         HealerRotationMode.Lowest_Current => HealerTargeting.GetLowestCurrent(),
                         _ => HealerTargeting.ManualTarget(),
                     };
-
                     return target;
                 }
 
@@ -436,10 +434,12 @@ namespace WrathCombo.AutoRotation
                 var inRange = CustomComboFunctions.IsInLineOfSight(target) && CustomComboFunctions.InActionRange(outAct, target);
 
                 var canUse = canUseSelf || canUseTarget || areaTargeted;
-                if (canUse && (inRange || areaTargeted))
-                {
+
+                if (canUse)
                     Svc.Targets.Target = target;
 
+                if (canUse && (inRange || areaTargeted))
+                {
                     var ret = ActionManager.Instance()->UseAction(ActionType.Action, outAct, canUseTarget ? target.GameObjectId : Player.Object.GameObjectId);
                     if (mode is HealerRotationMode && ret)
                         LastHealAt = Environment.TickCount64 + castTime;
@@ -488,18 +488,32 @@ namespace WrathCombo.AutoRotation
 
         public class DPSTargeting
         {
-            public static System.Collections.Generic.IEnumerable<IGameObject> BaseSelection =>  Svc.Objects.Any(x => x is IBattleChara chara && chara.IsHostile() && CustomComboFunctions.IsInRange(chara) && !chara.IsDead && chara.IsTargetable && CustomComboFunctions.IsInLineOfSight(chara) && IsPriority(chara)) ? 
-                                                                                                Svc.Objects.Where(x => x is IBattleChara chara && chara.IsHostile() && CustomComboFunctions.IsInRange(chara) && !chara.IsDead && chara.IsTargetable && CustomComboFunctions.IsInLineOfSight(chara) && IsPriority(chara)) :
-                                                                                                Svc.Objects.Where(x => x is IBattleChara chara && chara.IsHostile() && CustomComboFunctions.IsInRange(chara) && !chara.IsDead && chara.IsTargetable && CustomComboFunctions.IsInLineOfSight(chara));
+            private static bool Query(IGameObject x) => x is IBattleChara chara && chara.IsHostile() && CustomComboFunctions.IsInRange(chara) && !chara.IsDead && chara.IsTargetable && CustomComboFunctions.IsInLineOfSight(chara);
+            public static System.Collections.Generic.IEnumerable<IGameObject> BaseSelection => Svc.Objects.Any(x => Query(x) && IsPriority(x)) ?
+                                                                                                Svc.Objects.Where(x => Query(x) && IsPriority(x)) :
+                                                                                                Svc.Objects.Where(x => Query(x));
 
             private static bool IsPriority(IGameObject x)
             {
-                bool isFate = Service.Configuration.RotationConfig.DPSSettings.FATEPriority && x.Struct()->FateId != 0 && CustomComboFunctions.InFATE();
-                bool isQuest = Service.Configuration.RotationConfig.DPSSettings.QuestPriority && CustomComboFunctions.IsQuestMob(x);
-                if (Player.Object.GetRole() is CombatRole.Tank && x.TargetObjectId != Player.Object.GameObjectId)
-                    return true;
+                if (x is IBattleChara chara)
+                {
+                    bool isFate = Service.Configuration.RotationConfig.DPSSettings.FATEPriority && x.Struct()->FateId != 0 && CustomComboFunctions.InFATE();
+                    bool isQuest = Service.Configuration.RotationConfig.DPSSettings.QuestPriority && CustomComboFunctions.IsQuestMob(x);
 
-                return isFate || isQuest;
+                    return isFate || isQuest;
+                }
+                return false;
+            }
+
+            public static bool IsCombatPriority(IGameObject x)
+            {
+                if (x is IBattleChara chara)
+                {
+                    if (!Service.Configuration.RotationConfig.DPSSettings.PreferNonCombat) return true;
+                    bool inCombat = Service.Configuration.RotationConfig.DPSSettings.PreferNonCombat && !chara.Struct()->InCombat;
+                    return inCombat;
+                }
+                return false;
             }
 
             public static IGameObject? GetTankTarget()
@@ -513,33 +527,33 @@ namespace WrathCombo.AutoRotation
 
             public static IGameObject? GetNearestTarget()
             {
-                return BaseSelection.OrderBy(x => CustomComboFunctions.GetTargetDistance(x)).FirstOrDefault();
+                return BaseSelection.OrderByDescending(x => IsCombatPriority(x)).ThenBy(x => CustomComboFunctions.GetTargetDistance(x)).FirstOrDefault();
             }
 
             public static IGameObject? GetFurthestTarget()
             {
-                return BaseSelection.OrderByDescending(x => CustomComboFunctions.GetTargetDistance(x)).FirstOrDefault();
+                return BaseSelection.OrderByDescending(x => IsCombatPriority(x)).ThenByDescending(x => CustomComboFunctions.GetTargetDistance(x)).FirstOrDefault();
             }
 
             public static IGameObject? GetLowestCurrentTarget()
             {
-                return BaseSelection.OrderBy(x => (x as IBattleChara).CurrentHp).FirstOrDefault();
+                return BaseSelection.OrderByDescending(x => IsCombatPriority(x)).ThenBy(x => (x as IBattleChara).CurrentHp).FirstOrDefault();
             }
 
             public static IGameObject? GetHighestCurrentTarget()
             {
-                return BaseSelection.OrderByDescending(x => (x as IBattleChara).CurrentHp).FirstOrDefault();
+                return BaseSelection.OrderByDescending(x => IsCombatPriority(x)).ThenByDescending(x => (x as IBattleChara).CurrentHp).FirstOrDefault();
             }
 
             public static IGameObject? GetLowestMaxTarget()
             {
 
-                return BaseSelection.OrderBy(x => (x as IBattleChara).MaxHp).ThenBy(x => CustomComboFunctions.GetTargetHPPercent(x)).ThenBy(x => CustomComboFunctions.GetTargetDistance(x)).FirstOrDefault();
+                return BaseSelection.OrderByDescending(x => IsCombatPriority(x)).ThenBy(x => (x as IBattleChara).MaxHp).ThenBy(x => CustomComboFunctions.GetTargetHPPercent(x)).ThenBy(x => CustomComboFunctions.GetTargetDistance(x)).FirstOrDefault();
             }
 
             public static IGameObject? GetHighestMaxTarget()
             {
-                return BaseSelection.OrderByDescending(x => (x as IBattleChara).MaxHp).ThenBy(x => CustomComboFunctions.GetTargetHPPercent(x)).FirstOrDefault();
+                return BaseSelection.OrderByDescending(x => IsCombatPriority(x)).ThenByDescending(x => (x as IBattleChara).MaxHp).ThenBy(x => CustomComboFunctions.GetTargetHPPercent(x)).FirstOrDefault();
             }
         }
 
@@ -550,7 +564,7 @@ namespace WrathCombo.AutoRotation
                 if (Svc.Targets.Target == null) return null;
                 var t = Svc.Targets.Target;
                 bool goodToHeal = CustomComboFunctions.GetTargetHPPercent(t) <= (TargetHasRegen(t) ? Service.Configuration.RotationConfig.HealerSettings.SingleTargetRegenHPP : Service.Configuration.RotationConfig.HealerSettings.SingleTargetHPP);
-                if (goodToHeal)
+                if (goodToHeal && !t.IsHostile())
                 {
                     return t;
                 }
@@ -601,7 +615,8 @@ namespace WrathCombo.AutoRotation
             public static IGameObject? GetLowestCurrentTarget()
             {
                 return DPSTargeting.BaseSelection
-                    .OrderByDescending(x => x.TargetObject?.GameObjectId != Player.Object?.GameObjectId)
+                    .OrderByDescending(x => DPSTargeting.IsCombatPriority(x))
+                    .ThenByDescending(x => x.TargetObject?.GameObjectId != Player.Object?.GameObjectId)
                     .ThenBy(x => (x as IBattleChara).CurrentHp)
                     .ThenBy(x => CustomComboFunctions.GetTargetHPPercent(x)).FirstOrDefault();
             }
@@ -609,23 +624,28 @@ namespace WrathCombo.AutoRotation
             public static IGameObject? GetHighestCurrentTarget()
             {
                 return DPSTargeting.BaseSelection
-                    .OrderByDescending(x => x.TargetObject?.GameObjectId != Player.Object?.GameObjectId)
+                    .OrderByDescending(x => DPSTargeting.IsCombatPriority(x))
+                    .ThenByDescending(x => x.TargetObject?.GameObjectId != Player.Object?.GameObjectId)
                     .ThenByDescending(x => (x as IBattleChara).CurrentHp)
                     .ThenBy(x => CustomComboFunctions.GetTargetHPPercent(x)).FirstOrDefault();
             }
 
             public static IGameObject? GetLowestMaxTarget()
             {
-                return DPSTargeting.BaseSelection
-                    .OrderByDescending(x => x.TargetObject?.GameObjectId != Player.Object?.GameObjectId)
-                    .OrderBy(x => (x as IBattleChara).MaxHp)
+                var t = DPSTargeting.BaseSelection
+                    .OrderByDescending(x => DPSTargeting.IsCombatPriority(x))
+                    .ThenByDescending(x => x.TargetObject?.GameObjectId != Player.Object?.GameObjectId)
+                    .ThenBy(x => (x as IBattleChara).MaxHp)
                     .ThenBy(x => CustomComboFunctions.GetTargetHPPercent(x)).FirstOrDefault();
+
+                return t;
             }
 
             public static IGameObject? GetHighestMaxTarget()
             {
                 return DPSTargeting.BaseSelection
-                    .OrderByDescending(x => x.TargetObject?.GameObjectId != Player.Object?.GameObjectId)
+                    .OrderByDescending(x => DPSTargeting.IsCombatPriority(x))
+                    .ThenByDescending(x => x.TargetObject?.GameObjectId != Player.Object?.GameObjectId)
                     .ThenByDescending(x => (x as IBattleChara).MaxHp)
                     .ThenBy(x => CustomComboFunctions.GetTargetHPPercent(x)).FirstOrDefault();
             }
