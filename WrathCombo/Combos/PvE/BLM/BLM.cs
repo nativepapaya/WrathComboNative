@@ -267,10 +267,10 @@ internal static partial class BLM
 
             if (Gauge.InAstralFire)
             {
-                if (Gauge.IsParadoxActive && elementTimer < 3 && curMp >= MP.FireI)
+                if (Gauge.IsParadoxActive && gcdsInTimer < 2 && curMp >= MP.FireI)
                     return Paradox;
 
-                if ((HasEffect(Buffs.Firestarter) && elementTimer < 3 &&
+                if ((HasEffect(Buffs.Firestarter) && gcdsInTimer < 2 &&
                      curMp >= MP.FireI) || (HasEffect(Buffs.Firestarter) && Gauge.AstralFireStacks < 3))
                     return Fire3;
 
@@ -297,7 +297,7 @@ internal static partial class BLM
                 }
 
                 if (LevelChecked(Fire4))
-                    if (elementTimer > 3 && curMp >= MP.FireI)
+                    if (gcdsInTimer > 1 && curMp >= MP.FireI)
                     {
                         if (IsEnabled(CustomComboPreset.BLM_ST_Triplecast) &&
                             canWeave && ActionReady(Triplecast) &&
