@@ -4283,7 +4283,7 @@ public enum CustomComboPreset
 
     [ParentCombo(RDM_ST_MeleeCombo)]
     [CustomComboInfo("Melee Combo Manual Trigger Option",
-        "Adds the melee combo to the rotation when you manually press Riposte.",
+        "Adds the melee combo to the rotation when you manually press Enchanted Riposte.",
         RDM.JobID)]
     RDM_ST_Adv_MeleeFill = 13710,
     
