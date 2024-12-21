@@ -267,7 +267,7 @@ internal static partial class BLM
 
             if (Gauge.InAstralFire)
             {
-                if (Gauge.IsParadoxActive && elementTimer <= 3 && curMp >= MP.FireI)
+                if (Gauge.IsParadoxActive && elementTimer <= 4 && curMp >= MP.FireI)
                     return Paradox;
 
                 if ((HasEffect(Buffs.Firestarter) && elementTimer <= 3 &&
