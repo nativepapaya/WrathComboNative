@@ -15,7 +15,7 @@ namespace WrathCombo.Combos.PvE
             public static UserInt
                 RDM_VariantCure = new("RDM_VariantCure"),
                 RDM_ST_Lucid_Threshold = new("RDM_LucidDreaming_Threshold", 6500),
-                RDM_ST_Melee_Combo_Overcap_Protection = new("RDM_Melee_Combo_Overcap_Protection", 50),
+                RDM_ST_Melee_Combo_Overcap_Protection = new("RDM_Melee_Combo_Overcap_Protection", 80),
                 RDM_ST_oGCD_Acceleration_Pooling = new("RDM_ST_oGCD_Acceleration_Pooling", 0),
                 RDM_AoE_Lucid_Threshold = new("RDM_AoE_Lucid_Threshold", 6500),
                 RDM_AoE_MoulinetRange = new("RDM_MoulinetRange"),
