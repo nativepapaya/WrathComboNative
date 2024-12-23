@@ -4306,6 +4306,7 @@ public enum CustomComboPreset
     RDM_ST_MeleeCombo = 13410,
 
     [ParentCombo(RDM_ST_MeleeCombo)]
+    [ConflictingCombos(RDM_ST_Adv_MeleeFill)]
     [CustomComboInfo("Use Manafication and Embolden Option",
         "Add Manafication and Embolden.\n**Must be in melee range or have Gap close with Corps-a-corps enabled**" + "\n**Melee combo will start automatically**",
         RDM.JobID)]
@@ -4343,6 +4344,7 @@ public enum CustomComboPreset
     RDM_ST_Melee_Overcap_Protection = 13660,
 
     [ParentCombo(RDM_ST_MeleeCombo)]
+    [ConflictingCombos(RDM_ST_MeleeCombo_ManaEmbolden)]
     [CustomComboInfo("Melee Combo Manual Trigger Option",
         "Adds the melee combo to the rotation when you manually press Enchanted Riposte.",
         RDM.JobID)]

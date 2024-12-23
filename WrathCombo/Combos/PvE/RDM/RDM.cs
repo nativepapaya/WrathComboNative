@@ -216,28 +216,27 @@ namespace WrathCombo.Combos.PvE
                 //END_RDM_MELEEFINISHER
 
                 //RDM_ST_MELEECOMBO
-                if ((IsEnabled(CustomComboPreset.RDM_ST_Melee_Overcap_Protection) && 
-                     RDMMana.Min >= GetOptionValue(Config.RDM_ST_Melee_Combo_Overcap_Protection)) && IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo) && 
-                    LocalPlayer.IsCasting == false)
+                if (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo))
                 {
-                    if (IsNotEnabled(CustomComboPreset.RDM_ST_Adv_MeleeFill) || 
-                        (IsEnabled(CustomComboPreset.RDM_ST_Melee_Overcap_Protection) && 
-                         RDMMana.Min >= GetOptionValue(Config.RDM_ST_Melee_Combo_Overcap_Protection)))
-                    {
-                        bool ActionFound =
-                            (!Config.RDM_ST_MeleeCombo_Adv && (actionID is Jolt or Jolt2 or Jolt3)) ||
-                            (Config.RDM_ST_MeleeCombo_Adv &&
-                             ((Config.RDM_ST_MeleeCombo_OnAction[0] && actionID is Jolt or Jolt2 or Jolt3) ||
-                              (Config.RDM_ST_MeleeCombo_OnAction[1] && actionID is Riposte or EnchantedRiposte)));
+                    bool ActionFound =
+                        (!Config.RDM_ST_MeleeCombo_Adv && (actionID is Jolt or Jolt2 or Jolt3)) ||
+                        (Config.RDM_ST_MeleeCombo_Adv &&
+                            ((Config.RDM_ST_MeleeCombo_OnAction[0] && actionID is Jolt or Jolt2 or Jolt3) ||
+                            (Config.RDM_ST_MeleeCombo_OnAction[1] && actionID is Riposte or EnchantedRiposte)));
 
-                        if (ActionFound)
+                    if (ActionFound)
+                    {
+                        bool OvercapCheck = IsNotEnabled(CustomComboPreset.RDM_ST_Melee_Overcap_Protection) ||
+                                            (RDMMana.Min >= Config.RDM_ST_Melee_Combo_Overcap_Protection);
+
+                        if (OvercapCheck && LocalPlayer.IsCasting == false)
                         {
-                            if (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden) && 
+                            if (IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden) &&
                                 MeleeCombo.TrySTManaEmbolden(
                                     actionID, lastComboMove, level, out uint ManaEmboldenID,
                                     IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_CorpsGapCloser),
                                     IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_ManaEmbolden_DoubleCombo),
-                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana))) 
+                                    IsEnabled(CustomComboPreset.RDM_ST_MeleeCombo_UnbalanceMana)))
                                 return ManaEmboldenID;
 
                             if (MeleeCombo.TrySTMeleeCombo(actionID, lastComboMove, comboTime, out uint MeleeID,
